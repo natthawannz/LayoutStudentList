@@ -9,6 +9,10 @@ class StudentListApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
       home: StudentListPage(),
     );
   }
@@ -122,8 +126,9 @@ class StudentListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Student CIS List'),
+        title: const Text('Student CIS List'),
         centerTitle: true,
+        elevation: 0,
       ),
       body: ListView.builder(
         itemCount: students.length,
@@ -138,43 +143,51 @@ class StudentListPage extends StatelessWidget {
                 ),
               );
             },
-            child: Container(
-              margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: student.gender == 'ชาย'
-                    ? Colors.blue[300]
-                    : Colors.orange[300],
-                borderRadius: BorderRadius.circular(10),
+            child: Card(
+              margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
               ),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    backgroundImage: AssetImage(student.imagePath),
-                    radius: 30,
-                  ),
-                  SizedBox(width: 16),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        student.name,
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      backgroundImage: AssetImage(student.imagePath),
+                      radius: 30,
+                      onBackgroundImageError: (_, __) {
+                        debugPrint('Error loading image: ${student.imagePath}');
+                      },
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            student.name,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'ID: ${student.studentId}',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.black54,
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(height: 4),
-                      Text(
-                        'ID: ${student.studentId}',
-                        style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.black54,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                ],
+                    ),
+                    Icon(Icons.arrow_forward_ios,
+                        color: const Color.fromARGB(255, 19, 34, 170)),
+                  ],
+                ),
               ),
             ),
           );
@@ -194,31 +207,68 @@ class StudentDetailPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('ข้อมูลของ ${student.name}'),
+        centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Center(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               CircleAvatar(
                 backgroundImage: AssetImage(student.imagePath),
-                radius: 150,
+                radius: 100,
+                onBackgroundImageError: (_, __) {
+                  debugPrint('Error loading image: ${student.imagePath}');
+                },
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 24),
               Text(
-                'ชื่อ: ${student.gender == 'ชาย' ? 'นาย' : 'นางสาว'}${student.name}',
-                style: TextStyle(fontSize: 34, fontWeight: FontWeight.bold),
+                student.name,
+                style: const TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+                textAlign: TextAlign.center,
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 12),
               Text(
                 'รหัสนักศึกษา: ${student.studentId}',
-                style: TextStyle(fontSize: 30, color: Colors.grey[800]),
+                style: const TextStyle(fontSize: 22, color: Colors.black54),
               ),
-              SizedBox(height: 16),
-              Text(
-                'เพศ: ${student.gender}',
-                style: TextStyle(fontSize: 30, color: Colors.grey[600]),
+              const SizedBox(height: 12),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                decoration: BoxDecoration(
+                  color: student.gender == 'ชาย'
+                      ? Colors.blue[100]
+                      : Colors.pink[100],
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  'เพศ: ${student.gender}',
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                child: const Text(
+                  'ย้อนกลับ',
+                  style: TextStyle(fontSize: 18),
+                ),
               ),
             ],
           ),
